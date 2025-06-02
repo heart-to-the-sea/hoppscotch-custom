@@ -4,6 +4,27 @@
       <div class="md:grid md:grid-cols-3 md:gap-4">
         <div class="p-8 md:col-span-1">
           <h3 class="heading">
+            服务器
+          </h3>
+          <p class="my-1 text-secondaryLight">
+            选择远程服务器地址
+          </p>
+        </div>
+        <div class="space-y-8 p-8 md:col-span-2">
+          <section>
+            <h4 class="font-semibold text-secondaryDark">
+              服务器列表
+            </h4>
+            <div class="mt-4">
+              <ChangeDomain />
+            </div>
+          </section>
+
+        </div>
+      </div>
+      <div class="md:grid md:grid-cols-3 md:gap-4">
+        <div class="p-8 md:col-span-1">
+          <h3 class="heading">
             {{ t("settings.general") }}
           </h3>
           <p class="my-1 text-secondaryLight">
@@ -38,129 +59,79 @@
             </h4>
             <div class="my-1 text-secondaryLight">
               {{ t("settings.experiments_notice") }}
-              <HoppSmartAnchor
-                class="link"
-                to="https://github.com/hoppscotch/hoppscotch/issues/new/choose"
-                blank
-                :label="t('app.contact_us')"
-              />.
+              <HoppSmartAnchor class="link" to="https://github.com/hoppscotch/hoppscotch/issues/new/choose" blank
+                :label="t('app.contact_us')" />.
             </div>
             <div class="space-y-4 py-4">
               <div class="flex items-center">
-                <HoppSmartToggle
-                  v-if="hasPlatformTelemetry"
-                  :on="TELEMETRY_ENABLED"
-                  @change="showConfirmModal"
-                >
+                <HoppSmartToggle v-if="hasPlatformTelemetry" :on="TELEMETRY_ENABLED" @change="showConfirmModal">
                   {{ t("settings.telemetry") }}
                 </HoppSmartToggle>
               </div>
               <div class="flex items-center">
-                <HoppSmartToggle
-                  :on="EXPAND_NAVIGATION"
-                  @change="toggleSetting('EXPAND_NAVIGATION')"
-                >
+                <HoppSmartToggle :on="EXPAND_NAVIGATION" @change="toggleSetting('EXPAND_NAVIGATION')">
                   {{ t("settings.expand_navigation") }}
                 </HoppSmartToggle>
               </div>
               <div class="flex items-center">
-                <HoppSmartToggle
-                  :on="SIDEBAR_ON_LEFT"
-                  @change="toggleSetting('SIDEBAR_ON_LEFT')"
-                >
+                <HoppSmartToggle :on="SIDEBAR_ON_LEFT" @change="toggleSetting('SIDEBAR_ON_LEFT')">
                   {{ t("settings.sidebar_on_left") }}
                 </HoppSmartToggle>
               </div>
               <div v-if="hasAIExperimentsSupport" class="flex items-center">
-                <HoppSmartToggle
-                  :on="ENABLE_AI_EXPERIMENTS"
-                  @change="toggleSetting('ENABLE_AI_EXPERIMENTS')"
-                >
+                <HoppSmartToggle :on="ENABLE_AI_EXPERIMENTS" @change="toggleSetting('ENABLE_AI_EXPERIMENTS')">
                   {{ t("settings.ai_experiments") }}
                 </HoppSmartToggle>
               </div>
-              <div
-                v-if="hasAIExperimentsSupport && ENABLE_AI_EXPERIMENTS"
-                class="flex items-center"
-              >
+              <div v-if="hasAIExperimentsSupport && ENABLE_AI_EXPERIMENTS" class="flex items-center">
                 <div class="flex flex-col space-y-2 w-full">
                   <label class="text-secondaryLight">{{
                     t("settings.ai_request_naming_style")
-                  }}</label>
+                    }}</label>
                   <div class="flex flex-col space-y-4">
                     <div class="flex">
-                      <tippy
-                        interactive
-                        trigger="click"
-                        theme="popover"
-                        :on-shown="() => namingStyleTippyActions?.focus()"
-                      >
+                      <tippy interactive trigger="click" theme="popover"
+                        :on-shown="() => namingStyleTippyActions?.focus()">
                         <HoppSmartSelectWrapper>
-                          <HoppButtonSecondary
-                            class="flex flex-1 !justify-start rounded-none pr-8"
-                            :label="activeNamingStyle?.label"
-                            outline
-                          />
+                          <HoppButtonSecondary class="flex flex-1 !justify-start rounded-none pr-8"
+                            :label="activeNamingStyle?.label" outline />
                         </HoppSmartSelectWrapper>
                         <template #content="{ hide }">
-                          <div
-                            ref="namingStyleTippyActions"
-                            class="flex flex-col focus:outline-none"
-                            tabindex="0"
-                            @keyup.escape="hide()"
-                          >
-                            <HoppSmartLink
-                              v-for="style in supportedNamingStyles"
-                              :key="style.id"
-                              class="flex flex-1"
+                          <div ref="namingStyleTippyActions" class="flex flex-col focus:outline-none" tabindex="0"
+                            @keyup.escape="hide()">
+                            <HoppSmartLink v-for="style in supportedNamingStyles" :key="style.id" class="flex flex-1"
                               @click="
                                 () => {
                                   AI_REQUEST_NAMING_STYLE = style.id
                                   hide()
                                 }
-                              "
-                            >
-                              <HoppSmartItem
-                                :label="style.label"
-                                :active-info-icon="
-                                  AI_REQUEST_NAMING_STYLE === style.id
-                                "
-                                :info-icon="
-                                  AI_REQUEST_NAMING_STYLE === style.id
+                              ">
+                              <HoppSmartItem :label="style.label" :active-info-icon="AI_REQUEST_NAMING_STYLE === style.id
+                                " :info-icon="AI_REQUEST_NAMING_STYLE === style.id
                                     ? IconDone
                                     : null
-                                "
-                              />
+                                  " />
                             </HoppSmartLink>
                           </div>
                         </template>
                       </tippy>
                     </div>
-                    <div
-                      v-if="AI_REQUEST_NAMING_STYLE === 'CUSTOM'"
-                      class="flex"
-                    >
-                      <textarea
-                        v-model="CUSTOM_NAMING_STYLE"
+                    <div v-if="AI_REQUEST_NAMING_STYLE === 'CUSTOM'" class="flex">
+                      <textarea v-model="CUSTOM_NAMING_STYLE"
                         class="flex flex-1 bg-primaryLight px-4 py-2 rounded border border-dividerLight focus:border-divider transition resize-none"
-                        :placeholder="
-                          t(
-                            'settings.ai_request_naming_style_custom_placeholder'
-                          )
-                        "
-                        rows="4"
-                      >
-                      </textarea>
+                        :placeholder="t(
+                          'settings.ai_request_naming_style_custom_placeholder'
+                        )
+                          " rows="4">
+  </textarea>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="flex items-center">
-              <HoppSmartToggle
-                :on="EXPERIMENTAL_SCRIPTING_SANDBOX"
-                @change="toggleSetting('EXPERIMENTAL_SCRIPTING_SANDBOX')"
-              >
+              <HoppSmartToggle :on="EXPERIMENTAL_SCRIPTING_SANDBOX"
+                @change="toggleSetting('EXPERIMENTAL_SCRIPTING_SANDBOX')">
                 {{ t("settings.experimental_scripting_sandbox") }}
               </HoppSmartToggle>
             </div>
@@ -249,10 +220,7 @@
             </h4>
             <AppKernelInterceptor :is-tooltip-component="false" />
           </section>
-          <section
-            v-for="[id, settings] in kernelInterceptorsWithSettings"
-            :key="id"
-          >
+          <section v-for="[id, settings] in kernelInterceptorsWithSettings" :key="id">
             <h4 class="font-semibold text-secondaryDark">
               {{ settings.title(t) }}
             </h4>
@@ -262,27 +230,19 @@
       </div>
 
       <template v-if="platform.ui?.additionalSettingsSections?.length">
-        <template
-          v-for="item in platform.ui?.additionalSettingsSections"
-          :key="item.id"
-        >
+        <template v-for="item in platform.ui?.additionalSettingsSections" :key="item.id">
           <component :is="item" />
         </template>
       </template>
     </div>
-    <HoppSmartConfirmModal
-      :show="confirmRemove"
-      :title="`${t('confirm.remove_telemetry')} ${t(
-        'settings.telemetry_helps_us'
-      )}`"
-      @hide-modal="confirmRemove = false"
-      @resolve="
+    <HoppSmartConfirmModal :show="confirmRemove" :title="`${t('confirm.remove_telemetry')} ${t(
+      'settings.telemetry_helps_us'
+    )}`" @hide-modal="confirmRemove = false" @resolve="
         () => {
           toggleSetting('TELEMETRY_ENABLED')
           confirmRemove = false
         }
-      "
-    />
+      " />
   </div>
 </template>
 
@@ -302,7 +262,7 @@ import * as A from "fp-ts/Array"
 import { platform } from "~/platform"
 import IconDone from "~icons/lucide/check"
 import { KernelInterceptorService } from "~/services/kernel-interceptor.service"
-
+import ChangeDomain from "~/components/smart/ChangeDomain.vue"
 const t = useI18n()
 const colorMode = useColorMode()
 
@@ -319,9 +279,9 @@ const kernelInterceptorsWithSettings = computed(() =>
     A.filterMap((kernelInterceptor) =>
       kernelInterceptor.settingsEntry
         ? O.some([
-            kernelInterceptor.id,
-            kernelInterceptor.settingsEntry,
-          ] as const)
+          kernelInterceptor.id,
+          kernelInterceptor.settingsEntry,
+        ] as const)
         : O.none
     )
   )
